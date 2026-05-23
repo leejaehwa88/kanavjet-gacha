@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a1628">
+<title>보령 카나브젯 출시 기념 뽑기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy:#060e1c;--navy2:#0c1a30;--navy3:#122040;
+  --blue:#1a56c4;--blue2:#2468d4;--blue3:#5aabff;
+  --silver:#c0d0e8;--silver2:#e8f0ff;
+  --gold:#d4a030;--gold2:#f0c040;
+  --chrome1:#b0c4d8;--chrome2:#ddeeff;--chrome3:#6080a0;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--navy)}
+body{
+  display:flex;justify-content:center;align-items:center;min-height:100dvh;
+  background:
+    radial-gradient(ellipse at 25% 0%,rgba(26,86,196,0.2) 0%,transparent 55%),
+    linear-gradient(170deg,#060e1c 0%,#0b1628 60%,#040c18 100%);
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+/* ── CARD ── */
+.card{
+  position:relative;z-index:1;
+  width:min(430px,100vw);height:100dvh;max-height:900px;
+  display:flex;flex-direction:column;align-items:center;overflow:hidden;
+  background:linear-gradient(180deg,#0c1a30 0%,#060e1c 100%);
+  box-shadow:0 0 80px rgba(26,86,196,0.22),inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ── HEADER ── */
+.hdr{
+  width:100%;padding:13px 20px 9px;
+  background:linear-gradient(180deg,rgba(26,86,196,0.18) 0%,transparent 100%);
+  border-bottom:1px solid rgba(120,180,255,0.14);
+  text-align:center;flex-shrink:0;
+}
+.hdr-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
+  color:#fff;font-size:9px;font-weight:700;letter-spacing:2.5px;
+  padding:3px 12px;border-radius:20px;margin-bottom:5px;
+  box-shadow:0 2px 14px rgba(26,86,196,0.5);
+}
+.hdr-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(13px,3.8vw,16px);
+  font-weight:900;color:var(--silver2);letter-spacing:1px;
+  text-shadow:0 0 20px rgba(90,171,255,0.4);
+}
+.hdr-title em{color:var(--blue3);font-style:normal}
+.hdr-sub{font-size:10px;color:#4a6898;margin-top:3px;letter-spacing:0.5px}
+
+/* ── SCREENS ── */
+.screen{width:100%;flex:1;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.screen.off{display:none!important}
+.fade{animation:fadeUp 0.38s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ══════════════════════════════
+   SCREEN 1 — INTRO
+══════════════════════════════ */
+#s1{justify-content:space-between;padding:8px 0 14px}
+
+.welcome{
+  text-align:center;padding:6px 26px 0;
+  font-size:clamp(10.5px,2.7vw,12.5px);color:#4a6898;line-height:1.8
+}
+.welcome strong{color:var(--blue3)}
+
+/* ── MACHINE OUTER ── */
+.machine-scene{
+  position:relative;flex:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;
+}
+
+/* ── MACHINE SVG WRAPPER ── */
+.machine-svg-wrap{
+  position:relative;
+  width:clamp(220px,65vw,260px);
+}
+
+/* Canvas for physics balls */
+#ballCanvas{
+  position:absolute;
+  border-radius:6px 6px 0 0;
+  z-index:2;pointer-events:none;
+}
+
+/* ── LEVER ── */
+.lever-wrap{
+  position:absolute;right:-56px;top:70px;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;user-select:none;z-index:20;
+}
+.lever-knob{
+  width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 32% 30%,#f0f8ff 0%,#b0cce0 35%,#7090b0 68%,#3a5270 100%);
+  box-shadow:0 5px 16px rgba(0,0,0,0.6),inset 0 -2px 6px rgba(0,0,0,0.3),inset 0 2px 6px rgba(255,255,255,0.5);
+}
+.lever-rod{
+  width:10px;height:78px;
+  background:linear-gradient(90deg,#304860 0%,#8ab0d0 25%,#d8f0ff 50%,#8ab0d0 75%,#304860 100%);
+  border-radius:5px;
+  box-shadow:2px 0 10px rgba(0,0,0,0.5),-1px 0 4px rgba(255,255,255,0.12);
+  transform-origin:bottom center;
+}
+.lever-rod.spin{animation:rodSpin 0.9s cubic-bezier(0.4,0,0.2,1) forwards}
+@keyframes rodSpin{
+  0%{transform:rotate(0)}28%{transform:rotate(54deg)}
+  54%{transform:rotate(-20deg)}74%{transform:rotate(36deg)}
+  89%{transform:rotate(-9deg)}100%{transform:rotate(0)}
+}
+.lever-base{
+  width:28px;height:14px;border-radius:7px;
+  background:linear-gradient(180deg,#607890 0%,#28384e 100%);
+  box-shadow:0 3px 10px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.22);
+}
+.lever-lbl{font-size:8px;font-weight:700;color:#4a6898;letter-spacing:1.5px;margin-top:5px}
+
+/* ── PULL BUTTON ── */
+.btn-wrap{padding:0 22px;width:100%}
+.pull-btn{
+  width:100%;padding:15px;border:none;border-radius:50px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:900;
+  letter-spacing:2px;color:#fff;
+  background:linear-gradient(135deg,#1040aa 0%,var(--blue2) 52%,#3a8fff 100%);
+  box-shadow:0 6px 26px rgba(26,86,196,0.5),inset 0 1px 0 rgba(255,255,255,0.22),inset 0 -2px 0 rgba(0,0,60,0.3);
+  text-shadow:0 1px 4px rgba(0,0,100,0.4);
+  position:relative;overflow:hidden;transition:transform 0.12s,box-shadow 0.12s;
+}
+.pull-btn::before{
+  content:'';position:absolute;top:0;left:-130%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent);
+  animation:shimmer 2.8s linear infinite;
+}
+@keyframes shimmer{0%{left:-130%}100%{left:220%}}
+.pull-btn:active{transform:scale(0.96)}
+.pull-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ══════════════════════════════
+   SCREEN 2 — ANIMATION
+══════════════════════════════ */
+#s2{justify-content:center;align-items:center;gap:20px}
+
+.anim-lbl{
+  font-family:'Orbitron',sans-serif;font-size:11px;
+  color:var(--blue3);letter-spacing:3px;
+  animation:pulse 0.75s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+.fall-scene{
+  position:relative;width:clamp(220px,65vw,260px);height:360px;
+  display:flex;justify-content:center;
+}
+
+/* falling ball */
+#fallBall{
+  position:absolute;bottom:90px;left:50%;
+  transform:translate(-50%,-320px) rotate(-30deg);
+  opacity:0;
+  transition:none;
+  z-index:30;
+}
+#fallBall.drop{animation:ballDrop 1.05s cubic-bezier(0.22,1,0.36,1) forwards}
+@keyframes ballDrop{
+  0%  {opacity:0;transform:translate(-50%,-320px) rotate(-30deg)}
+  55% {opacity:1;transform:translate(-50%,16px) rotate(12deg)}
+  70% {transform:translate(-50%,-12px) rotate(-6deg)}
+  84% {transform:translate(-50%,6px) rotate(3deg)}
+  100%{opacity:1;transform:translate(-50%,0) rotate(0)}
+}
+
+.dots{display:flex;gap:9px}
+.dot{width:9px;height:9px;border-radius:50%;animation:dotUp 0.65s ease-in-out infinite}
+.dot:nth-child(1){background:var(--blue);animation-delay:0s}
+.dot:nth-child(2){background:var(--blue2);animation-delay:0.18s}
+.dot:nth-child(3){background:var(--blue3);animation-delay:0.36s}
+@keyframes dotUp{0%,100%{transform:translateY(0);opacity:0.4}50%{transform:translateY(-11px);opacity:1}}
+.anim-msg{font-size:11px;color:#3a5878;letter-spacing:1px}
+
+/* ══════════════════════════════
+   SCREEN 3 — RESULT
+══════════════════════════════ */
+#s3{justify-content:flex-start;padding:12px 16px;gap:10px;overflow-y:auto}
+
+.res-hint{
+  font-size:12px;color:#3a5878;text-align:center;
+  letter-spacing:1px;animation:pulse 1.6s ease-in-out infinite;
+  width:100%;flex-shrink:0;
+}
+
+/* Result capsule (sphere split) */
+.res-cap-wrap{
+  position:relative;width:130px;height:130px;
+  align-self:center;flex-shrink:0;
+  cursor:pointer;
+  animation:resBob 2.2s ease-in-out infinite;
+}
+@keyframes resBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.res-cap-wrap.opened{animation:none}
+.res-cap-wrap:active{transform:scale(0.94)!important}
+
+/* two hemisphere halves */
+.h-top,.h-bot{
+  position:absolute;left:50%;width:100px;height:50px;overflow:hidden;
+  transition:transform 0.78s cubic-bezier(0.34,1.4,0.64,1);
+}
+.h-top{top:15px;transform:translateX(-50%)}
+.h-bot{top:65px;transform:translateX(-50%)}
+
+/* opened state */
+.res-cap-wrap.opened .h-top{transform:translateX(-50%) translateY(-42px) rotate(-16deg)}
+.res-cap-wrap.opened .h-bot{transform:translateX(-50%) translateY(42px) rotate(8deg)}
+
+/* paper slip */
+.slip{
+  position:absolute;left:50%;top:50%;
+  transform:translateX(-50%) translateY(30px);
+  opacity:0;width:56px;
+  background:linear-gradient(180deg,#fff9ec 0%,#fff3d0 100%);
+  border-radius:4px 4px 3px 3px;
+  padding:9px 5px 7px;text-align:center;
+  box-shadow:0 4px 16px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.85);
+  z-index:20;
+  transition:transform 0.8s cubic-bezier(0.34,1.3,0.64,1) 0.5s,opacity 0.45s 0.5s;
+}
+.slip.show{transform:translateX(-50%) translateY(-44px);opacity:1}
+.slip-icon{font-size:20px;display:block;margin-bottom:3px}
+.slip-txt{font-size:8px;font-weight:700;color:#c0392b;line-height:1.4}
+
+/* popup */
+.popup{
+  width:100%;
+  background:linear-gradient(180deg,rgba(14,26,54,0.97) 0%,rgba(6,14,28,0.99) 100%);
+  border:1px solid rgba(74,158,255,0.16);border-radius:18px;padding:15px;
+  box-shadow:0 0 40px rgba(26,86,196,0.16);flex-shrink:0;
+}
+.popup.off{display:none!important}
+.pop-emoji{font-size:30px;text-align:center;margin-bottom:3px;animation:popIn 0.5s ease}
+@keyframes popIn{0%{transform:scale(0) rotate(-25deg)}65%{transform:scale(1.2) rotate(8deg)}85%{transform:scale(0.9)}100%{transform:scale(1)}}
+.pop-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(17px,4.8vw,21px);
+  font-weight:900;color:var(--silver2);text-align:center;
+  text-shadow:0 0 20px rgba(90,171,255,0.3);margin-bottom:2px;
+}
+.pop-sub{font-size:11px;color:#3a5878;text-align:center;margin-bottom:11px}
+.promo{
+  background:linear-gradient(135deg,rgba(26,86,196,0.15),rgba(8,24,70,0.26));
+  border:1px solid rgba(74,158,255,0.16);border-radius:12px;
+  padding:12px;margin-bottom:11px;position:relative;overflow:hidden;
+}
+.promo::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--blue3),var(--blue));
+}
+.promo-tag{
+  display:inline-block;font-size:9px;font-weight:700;letter-spacing:2px;
+  color:var(--blue3);padding:2px 9px;margin-bottom:7px;
+  background:rgba(90,171,255,0.1);border:1px solid rgba(90,171,255,0.2);border-radius:10px;
+}
+.promo-head{
+  font-size:clamp(12px,3.3vw,14px);font-weight:900;color:var(--silver2);
+  line-height:1.55;margin-bottom:9px;
+}
+.promo-head em{color:var(--blue3);font-style:normal;text-shadow:0 0 10px rgba(90,171,255,0.4)}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px}
+.feat{
+  display:flex;align-items:flex-start;gap:5px;
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
+  border-radius:8px;padding:6px 7px;font-size:10px;color:var(--silver);line-height:1.4;
+}
+.feat-ic{
+  width:20px;height:20px;border-radius:5px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  display:flex;align-items:center;justify-content:center;font-size:11px;
+  box-shadow:0 2px 6px rgba(26,86,196,0.4);
+}
+.promo-body{
+  font-size:10.5px;color:#4a6898;line-height:1.65;
+  border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;
+}
+.promo-body strong{color:var(--gold2)}
+.launch{
+  display:inline-block;font-size:14px;font-weight:900;
+  background:linear-gradient(90deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.retry{
+  width:100%;padding:13px;border:2px solid rgba(90,171,255,0.32);
+  border-radius:50px;background:transparent;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;
+  color:var(--blue3);letter-spacing:1px;transition:all 0.2s;
+}
+.retry:hover,.retry:active{background:rgba(90,171,255,0.1);border-color:var(--blue3)}
+
+/* particles */
+.ptc{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.pt{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--blue3);opacity:0;animation:ptF linear infinite}
+@keyframes ptF{0%{opacity:0;transform:translateY(100vh)}8%{opacity:0.45}92%{opacity:0.18}100%{opacity:0;transform:translateY(-10vh)}}
+</style>
+</head>
+<body>
+<div class="ptc" id="ptc"></div>
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-badge">★ BORYUNG LAUNCH EVENT ★</div>
+    <div class="hdr-title">(주)보령 <em>카나브젯</em> 출시</div>
+    <div class="hdr-sub">출시 기념 캡슐 뽑기 이벤트</div>
+  </div>
+
+  <!-- ══ S1 INTRO ══ -->
+  <div class="screen" id="s1">
+    <div class="welcome">
+      보령의 새로운 도약, <strong>카나브젯</strong> 출시를 축하합니다!<br>
+      출시 기념 캡슐 뽑기 이벤트에 참여해 보세요.
+    </div>
+
+    <div class="machine-scene">
+      <!-- LEVER -->
+      <div class="lever-wrap" id="lever" onclick="onPull()">
+        <div class="lever-knob"></div>
+        <div class="lever-rod" id="rod"></div>
+        <div class="lever-base"></div>
+        <div class="lever-lbl">PULL</div>
+      </div>
+
+      <!-- MACHINE SVG + canvas overlay -->
+      <div class="machine-svg-wrap" id="machineWrap">
+        <canvas id="ballCanvas"></canvas>
+        <svg id="machineSvg" width="100%" viewBox="0 0 260 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Glass globe gradient -->
+            <linearGradient id="globeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="rgba(180,220,255,0.13)"/>
+              <stop offset="60%" stop-color="rgba(60,110,200,0.06)"/>
+              <stop offset="100%" stop-color="rgba(5,15,40,0.12)"/>
+            </linearGradient>
+            <!-- Globe rim -->
+            <linearGradient id="rimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#7aa0c8"/>
+              <stop offset="30%" stop-color="#c8e0f8"/>
+              <stop offset="70%" stop-color="#6888a8"/>
+              <stop offset="100%" stop-color="#304860"/>
+            </linearGradient>
+            <!-- Body chrome -->
+            <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#1a3060"/>
+              <stop offset="40%" stop-color="#102040"/>
+              <stop offset="100%" stop-color="#080f20"/>
+            </linearGradient>
+            <!-- Body side chrome strip -->
+            <linearGradient id="chromeStrip" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#2a4060"/>
+              <stop offset="20%" stop-color="#6090c0"/>
+              <stop offset="50%" stop-color="#a8d0f0"/>
+              <stop offset="80%" stop-color="#6090c0"/>
+              <stop offset="100%" stop-color="#2a4060"/>
+            </linearGradient>
+            <!-- Coin mechanism -->
+            <radialGradient id="coinGrad" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#c0d8f0"/>
+              <stop offset="50%" stop-color="#7090b8"/>
+              <stop offset="100%" stop-color="#304868"/>
+            </radialGradient>
+            <radialGradient id="coinInner" cx="45%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#8aaac8"/>
+              <stop offset="100%" stop-color="#1a2840"/>
+            </radialGradient>
+            <!-- Base gradient -->
+            <linearGradient id="baseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#1e3a6a"/>
+              <stop offset="100%" stop-color="#080f22"/>
+            </linearGradient>
+            <linearGradient id="baseSide" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#304878"/>
+              <stop offset="50%" stop-color="#7090c0"/>
+              <stop offset="100%" stop-color="#304878"/>
+            </linearGradient>
+            <!-- Shine overlay -->
+            <radialGradient id="shineGrad" cx="35%" cy="28%" r="55%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+            <!-- LED glow -->
+            <radialGradient id="ledGrad" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#60ff80"/>
+              <stop offset="100%" stop-color="#00aa30"/>
+            </radialGradient>
+            <!-- Dispense shadow -->
+            <linearGradient id="chuteGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#050e1e"/>
+              <stop offset="100%" stop-color="#030a16"/>
+            </linearGradient>
+
+            <!-- Clip circle for globe contents -->
+            <clipPath id="globeClip">
+              <circle cx="130" cy="118" r="104"/>
+            </clipPath>
+          </defs>
+
+          <!-- ─── GLOBE ─── -->
+          <!-- Outer bezel ring -->
+          <circle cx="130" cy="118" r="113" fill="none" stroke="url(#rimGrad)" stroke-width="12"
+                  filter="url(#dropShadow)"/>
+          <!-- Globe glass fill -->
+          <circle cx="130" cy="118" r="107" fill="url(#globeGrad)"
+                  stroke="rgba(180,220,255,0.18)" stroke-width="1.5"/>
+
+          <!-- Shine highlight top-left -->
+          <ellipse cx="95" cy="78" rx="44" ry="30" fill="url(#shineGrad)" clip-path="url(#globeClip)"/>
+          <!-- Secondary reflection bottom-right -->
+          <ellipse cx="175" cy="165" rx="22" ry="14" fill="rgba(100,160,255,0.07)" clip-path="url(#globeClip)"/>
+          <!-- Bottom shadow inside globe -->
+          <ellipse cx="130" cy="200" rx="90" ry="30" fill="rgba(0,5,20,0.35)" clip-path="url(#globeClip)"/>
+
+          <!-- ─── NECK / FUNNEL ─── -->
+          <path d="M100,222 L96,252 L164,252 L160,222 Z"
+                fill="url(#bodyGrad)" stroke="rgba(120,180,255,0.15)" stroke-width="1"/>
+          <!-- Neck chrome strips -->
+          <rect x="96" y="235" width="68" height="4" fill="url(#chromeStrip)" rx="2"/>
+
+          <!-- ─── MACHINE BODY ─── -->
+          <!-- Body main block -->
+          <rect x="72" y="252" width="116" height="100" rx="8" fill="url(#bodyGrad)"
+                stroke="rgba(100,160,220,0.18)" stroke-width="1"/>
+          <!-- Body chrome vertical strips (sides) -->
+          <rect x="72" y="252" width="10" height="100" rx="4 0 0 4" fill="url(#baseSide)" opacity="0.6"/>
+          <rect x="178" y="252" width="10" height="100" rx="0 4 4 0" fill="url(#baseSide)" opacity="0.6"/>
+
+          <!-- Logo panel -->
+          <rect x="82" y="258" width="96" height="34" rx="5" fill="rgba(10,30,80,0.6)"
+                stroke="rgba(90,171,255,0.2)" stroke-width="1"/>
+          <text x="130" y="272" text-anchor="middle" font-family="Orbitron,sans-serif"
+                font-size="8.5" font-weight="900" fill="#5aabff" letter-spacing="2"
+                style="text-shadow:0 0 8px rgba(90,171,255,0.8)">BORYUNG</text>
+          <text x="130" y="284" text-anchor="middle" font-family="Noto Sans KR,sans-serif"
+                font-size="6.5" fill="#7890b8" letter-spacing="1">KANAVJET MACHINE</text>
+
+          <!-- ─── COIN MECHANISM ─── -->
+          <!-- Outer chrome ring -->
+          <circle cx="130" cy="316" r="26" fill="url(#coinGrad)"
+                  stroke="rgba(200,230,255,0.3)" stroke-width="2"/>
+          <!-- Inner dial -->
+          <circle cx="130" cy="316" r="18" fill="url(#coinInner)"
+                  stroke="rgba(120,180,240,0.2)" stroke-width="1.5"/>
+          <!-- Coin slot -->
+          <rect x="118" y="312" width="24" height="8" rx="4" fill="#020810"
+                stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <!-- Key mark -->
+          <circle cx="130" cy="316" r="4" fill="rgba(180,220,255,0.15)"
+                  stroke="rgba(180,220,255,0.3)" stroke-width="1"/>
+
+          <!-- LED status lights -->
+          <circle cx="82" cy="298" r="5" fill="url(#ledGrad)"
+                  filter="url(#ledGlow)">
+            <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="178" cy="298" r="5" fill="url(#ledGrad)" opacity="0.4">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- ─── DISPENSE CHUTE ─── -->
+          <!-- Chute funnel -->
+          <path d="M102,352 L98,368 L162,368 L158,352 Z"
+                fill="url(#chuteGrad)" stroke="rgba(100,150,200,0.12)" stroke-width="1"/>
+          <!-- Chute mouth -->
+          <rect x="88" y="368" width="84" height="22" rx="4 4 12 12"
+                fill="url(#chuteGrad)" stroke="rgba(100,150,200,0.1)" stroke-width="1"/>
+          <!-- Inner shadow -->
+          <rect x="94" y="372" width="72" height="14" rx="3"
+                fill="rgba(0,0,0,0.5)" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+          <!-- Opening slit -->
+          <rect x="100" y="374" width="60" height="4" rx="2" fill="rgba(0,0,0,0.8)"/>
+
+          <!-- ─── BASE / FEET ─── -->
+          <!-- Main base block -->
+          <rect x="62" y="390" width="136" height="26" rx="6" fill="url(#baseGrad)"
+                stroke="url(#baseSide)" stroke-width="1.5"/>
+          <!-- Chrome accent stripe on base -->
+          <rect x="68" y="398" width="124" height="4" rx="2" fill="url(#chromeStrip)" opacity="0.7"/>
+          <!-- Left foot -->
+          <rect x="68" y="413" width="36" height="7" rx="3 3 4 4" fill="url(#bodyGrad)"
+                stroke="rgba(100,160,220,0.2)" stroke-width="1"/>
+          <!-- Right foot -->
+          <rect x="156" y="413" width="36" height="7" rx="3 3 4 4" fill="url(#bodyGrad)"
+                stroke="rgba(100,160,220,0.2)" stroke-width="1"/>
+
+          <!-- Drop shadow filters -->
+          <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="rgba(0,0,0,0.7)"/>
+          </filter>
+          <filter id="ledGlow" x="-200%" y="-200%" width="500%" height="500%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </svg>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="pull-btn" id="pullBtn" onclick="onPull()">🎰 뽑기 돌리기</button>
+    </div>
+  </div>
+
+  <!-- ══ S2 ANIMATION ══ -->
+  <div class="screen off" id="s2">
+    <div class="anim-lbl">CAPSULE SELECTING...</div>
+    <div class="fall-scene" id="fallScene">
+      <!-- Mini machine + falling ball -->
+      <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:clamp(220px,65vw,260px)">
+        <svg width="100%" viewBox="0 0 260 420" xmlns="http://www.w3.org/2000/svg">
+          <use href="#machineSvg"/>
+          <!-- Reuse inline: just redraw key shapes -->
+          <defs>
+            <linearGradient id="g2" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgba(180,220,255,0.13)"/>
+              <stop offset="100%" stop-color="rgba(5,15,40,0.12)"/>
+            </linearGradient>
+          </defs>
+          <circle cx="130" cy="118" r="113" fill="none" stroke="url(#rimGrad)" stroke-width="12"/>
+          <circle cx="130" cy="118" r="107" fill="url(#globeGrad)" stroke="rgba(180,220,255,0.18)" stroke-width="1.5"/>
+          <ellipse cx="95" cy="78" rx="44" ry="30" fill="url(#shineGrad)" clip-path="url(#globeClip)"/>
+          <ellipse cx="130" cy="200" rx="90" ry="30" fill="rgba(0,5,20,0.35)" clip-path="url(#globeClip)"/>
+          <path d="M100,222 L96,252 L164,252 L160,222 Z" fill="url(#bodyGrad)" stroke="rgba(120,180,255,0.15)" stroke-width="1"/>
+          <rect x="96" y="235" width="68" height="4" fill="url(#chromeStrip)" rx="2"/>
+          <rect x="72" y="252" width="116" height="100" rx="8" fill="url(#bodyGrad)" stroke="rgba(100,160,220,0.18)" stroke-width="1"/>
+          <rect x="72" y="252" width="10" height="100" rx="4 0 0 4" fill="url(#baseSide)" opacity="0.6"/>
+          <rect x="178" y="252" width="10" height="100" rx="0 4 4 0" fill="url(#baseSide)" opacity="0.6"/>
+          <rect x="82" y="258" width="96" height="34" rx="5" fill="rgba(10,30,80,0.6)" stroke="rgba(90,171,255,0.2)" stroke-width="1"/>
+          <text x="130" y="272" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="8.5" font-weight="900" fill="#5aabff" letter-spacing="2">BORYUNG</text>
+          <text x="130" y="284" text-anchor="middle" font-family="Noto Sans KR,sans-serif" font-size="6.5" fill="#7890b8" letter-spacing="1">KANAVJET MACHINE</text>
+          <circle cx="130" cy="316" r="26" fill="url(#coinGrad)" stroke="rgba(200,230,255,0.3)" stroke-width="2"/>
+          <circle cx="130" cy="316" r="18" fill="url(#coinInner)" stroke="rgba(120,180,240,0.2)" stroke-width="1.5"/>
+          <rect x="118" y="312" width="24" height="8" rx="4" fill="#020810" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+          <circle cx="130" cy="316" r="4" fill="rgba(180,220,255,0.15)" stroke="rgba(180,220,255,0.3)" stroke-width="1"/>
+          <circle cx="82" cy="298" r="5" fill="url(#ledGrad)"><animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/></circle>
+          <circle cx="178" cy="298" r="5" fill="url(#ledGrad)" opacity="0.4"><animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/></circle>
+          <path d="M102,352 L98,368 L162,368 L158,352 Z" fill="url(#chuteGrad)" stroke="rgba(100,150,200,0.12)" stroke-width="1"/>
+          <rect x="88" y="368" width="84" height="22" rx="4 4 12 12" fill="url(#chuteGrad)" stroke="rgba(100,150,200,0.1)" stroke-width="1"/>
+          <rect x="94" y="372" width="72" height="14" rx="3" fill="rgba(0,0,0,0.5)"/>
+          <rect x="100" y="374" width="60" height="4" rx="2" fill="rgba(0,0,0,0.8)"/>
+          <rect x="62" y="390" width="136" height="26" rx="6" fill="url(#baseGrad)" stroke="url(#baseSide)" stroke-width="1.5"/>
+          <rect x="68" y="398" width="124" height="4" rx="2" fill="url(#chromeStrip)" opacity="0.7"/>
+          <rect x="68" y="413" width="36" height="7" rx="3 3 4 4" fill="url(#bodyGrad)"/>
+          <rect x="156" y="413" width="36" height="7" rx="3 3 4 4" fill="url(#bodyGrad)"/>
+          <!-- Shaking balls inside globe -->
+          <canvas id="ballCanvas2" style="display:none"/>
+        </svg>
+        <canvas id="animBallCanvas" style="position:absolute;top:0;left:0;border-radius:6px;pointer-events:none;z-index:5"></canvas>
+      </div>
+
+      <!-- FALLING BALL -->
+      <div id="fallBall">
+        <svg id="fallSvg" width="62" height="62" viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="fbTop" cx="38%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#80c8ff"/>
+              <stop offset="60%" stop-color="#1a56c4"/>
+              <stop offset="100%" stop-color="#0a2860"/>
+            </radialGradient>
+            <radialGradient id="fbBot" cx="50%" cy="65%" r="65%">
+              <stop offset="0%" stop-color="#f0f6ff"/>
+              <stop offset="60%" stop-color="#b0c8e0"/>
+              <stop offset="100%" stop-color="#6080a8"/>
+            </radialGradient>
+            <radialGradient id="fbShine" cx="32%" cy="28%" r="48%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.55)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- bottom half silver -->
+          <path d="M 5,31 A 26,26 0 0 0 57,31 Z" fill="url(#fbBot)"/>
+          <!-- top half blue -->
+          <path d="M 5,31 A 26,26 0 0 1 57,31 Z" fill="url(#fbTop)"/>
+          <!-- seam line -->
+          <line x1="5" y1="31" x2="57" y2="31" stroke="rgba(0,10,40,0.3)" stroke-width="2"/>
+          <!-- sphere outline -->
+          <circle cx="31" cy="31" r="26" fill="none" stroke="rgba(180,220,255,0.2)" stroke-width="1"/>
+          <!-- shine -->
+          <ellipse cx="22" cy="22" rx="11" ry="8" fill="url(#fbShine)"/>
+          <circle cx="26" cy="17" r="4" fill="rgba(255,255,255,0.25)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div class="anim-msg">캡슐이 선택되고 있습니다...</div>
+  </div>
+
+  <!-- ══ S3 RESULT ══ -->
+  <div class="screen off" id="s3">
+    <div class="res-hint" id="resHint">✨ 캡슐을 터치하여 열어보세요!</div>
+
+    <!-- Sphere capsule to crack open -->
+    <div class="res-cap-wrap" id="capWrap" onclick="openCap()">
+      <!-- Top hemisphere -->
+      <div class="h-top" id="hTop">
+        <svg width="100" height="50" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="rtop" cx="38%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#80c8ff"/>
+              <stop offset="55%" stop-color="#1a56c4"/>
+              <stop offset="100%" stop-color="#0a2860"/>
+            </radialGradient>
+            <radialGradient id="rshine" cx="32%" cy="25%" r="50%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.55)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+          </defs>
+          <!-- Semi-circle top -->
+          <path d="M2,50 A48,48 0 0 1 98,50 Z" fill="url(#rtop)"/>
+          <path d="M2,50 A48,48 0 0 1 98,50 Z" fill="url(#rshine)"/>
+          <path d="M2,50 A48,48 0 0 1 98,50 Z" fill="none" stroke="rgba(180,220,255,0.25)" stroke-width="1.5"/>
+          <ellipse cx="36" cy="32" rx="18" ry="12" fill="rgba(255,255,255,0.22)"/>
+          <circle cx="42" cy="25" r="6" fill="rgba(255,255,255,0.18)"/>
+        </svg>
+      </div>
+      <!-- Bottom hemisphere -->
+      <div class="h-bot" id="hBot">
+        <svg width="100" height="50" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="rbot" cx="50%" cy="65%" r="65%">
+              <stop offset="0%" stop-color="#f0f6ff"/>
+              <stop offset="55%" stop-color="#b0c8e0"/>
+              <stop offset="100%" stop-color="#6080a8"/>
+            </radialGradient>
+          </defs>
+          <path d="M2,0 A48,48 0 0 0 98,0 Z" fill="url(#rbot)"/>
+          <path d="M2,0 A48,48 0 0 0 98,0 Z" fill="none" stroke="rgba(180,220,255,0.25)" stroke-width="1.5"/>
+          <ellipse cx="64" cy="18" rx="14" ry="9" fill="rgba(255,255,255,0.14)"/>
+        </svg>
+      </div>
+      <!-- Seam glow -->
+      <div style="position:absolute;top:63px;left:50%;transform:translateX(-50%);width:96px;height:2px;background:rgba(180,220,255,0.35);border-radius:1px"></div>
+      <!-- Paper slip -->
+      <div class="slip" id="slip">
+        <span class="slip-icon">😢</span>
+        <span class="slip-txt">아쉬워요!<br>다음 기회에</span>
+      </div>
+    </div>
+
+    <!-- Result popup -->
+    <div class="popup off" id="popup">
+      <div class="pop-emoji">🎁</div>
+      <div class="pop-title">아쉬워요!</div>
+      <div class="pop-sub">이번엔 꽝이에요. 다음 기회를 노려보세요 😊</div>
+      <div class="promo">
+        <div class="promo-tag">📢 NEW PRODUCT LAUNCH</div>
+        <div class="promo-head"><em>카나브</em>의 강력한 효과에<br><em>시너지를 더하다!</em></div>
+        <div class="feats">
+          <div class="feat"><div class="feat-ic">💊</div><span>피마사르탄 +<br>로수바스타틴</span></div>
+          <div class="feat"><div class="feat-ic">❤️</div><span>혈압 +<br>이상지질혈증</span></div>
+          <div class="feat"><div class="feat-ic">🏆</div><span>카나브<br>검증된 효능</span></div>
+          <div class="feat"><div class="feat-ic">🚀</div><span>1정으로<br>두 가지 해결</span></div>
+        </div>
+        <div class="promo-body">
+          <span class="launch">6월 1일 공식 출시!</span><br>
+          <strong>카나브젯</strong>에 많은 관심과 성원 부탁드립니다.<br>
+          <span style="font-size:9.5px;opacity:0.6">— (주)보령 드림 —</span>
+        </div>
+      </div>
+      <button class="retry" onclick="resetGame()">🔄 다시 돌리기</button>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+<script>
+/* ── PARTICLES ── */
+(()=>{
+  const c=document.getElementById('ptc');
+  for(let i=0;i<14;i++){
+    const p=document.createElement('div');p.className='pt';
+    const s=Math.random()*1.4+0.7;
+    p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;`+
+      `animation-duration:${10+Math.random()*14}s;animation-delay:${Math.random()*14}s;`;
+    c.appendChild(p);
+  }
+})();
+
+/* ── BALL COLORS (round capsule sphere palette) ── */
+const BALLS=[
+  // [topColor, bottomColor]
+  ['#f080c0','#f8b0d8'],  // pink
+  ['#60c8f0','#a0e0ff'],  // sky blue
+  ['#a0f080','#c8f8a0'],  // mint green
+  ['#f0e060','#f8f0a0'],  // yellow
+  ['#c080f0','#e0b0ff'],  // purple
+  ['#f08040','#f8b880'],  // orange
+  ['#60e8c0','#a0f8e0'],  // teal
+  ['#f06060','#f8a0a0'],  // red
+  ['#80a0f8','#b0c8ff'],  // periwinkle
+  ['#f0c060','#f8e0a0'],  // gold
+  ['#80f0d0','#b0fce8'],  // seafoam
+  ['#d080f0','#e8b0ff'],  // lavender
+];
+
+/* ── PHYSICS BALL CLASS ── */
+class Ball {
+  constructor(x,y,r,vx,vy,ci){
+    this.x=x;this.y=y;this.r=r;this.vx=vx;this.vy=vy;this.ci=ci;
+    this.va=(Math.random()-0.5)*4; // visual rotation speed
+    this.angle=Math.random()*Math.PI*2;
+  }
+  step(W,H,dt,shaking){
+    if(shaking){this.vx+=(Math.random()-0.5)*280;this.vy+=(Math.random()-0.5)*280}
+    this.vy+=160*dt; // gravity
+    this.x+=this.vx*dt;this.y+=this.vy*dt;
+    this.angle+=this.va*dt;
+    // Bounce inside circular boundary
+    const R=W*0.5-this.r-2;
+    const dx=this.x-W/2,dy=this.y-H/2;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist>R){
+      const nx=dx/dist,ny=dy/dist;
+      const dot=this.vx*nx+this.vy*ny;
+      this.vx=(this.vx-2*dot*nx)*0.68;
+      this.vy=(this.vy-2*dot*ny)*0.68;
+      this.x=W/2+nx*R;this.y=H/2+ny*R;
+      this.va+=(Math.random()-0.5)*5;
+    }
+    // Damping
+    this.vx*=0.994;this.vy*=0.994;this.va*=0.98;
+  }
+  draw(ctx){
+    const [tc,bc]=BALLS[this.ci%BALLS.length];
+    ctx.save();
+    ctx.translate(this.x,this.y);
+    // Shadow
+    ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=5;ctx.shadowOffsetY=2;
+    // Full sphere base
+    ctx.beginPath();ctx.arc(0,0,this.r,0,Math.PI*2);
+    // Two-tone halves using clip
+    // Bottom (silver/light)
+    ctx.save();ctx.clip();
+    // Fill all with bottom color first
+    ctx.fillStyle=bc;ctx.fillRect(-this.r,-this.r,this.r*2,this.r*2);
+    // Overlay top half with top color
+    ctx.beginPath();ctx.arc(0,0,this.r,-Math.PI,0);ctx.closePath();
+    ctx.fillStyle=tc;ctx.fill();
+    // Seam line
+    ctx.shadowBlur=0;
+    ctx.beginPath();ctx.moveTo(-this.r,0);ctx.lineTo(this.r,0);
+    ctx.strokeStyle='rgba(0,0,20,0.22)';ctx.lineWidth=2;ctx.stroke();
+    // Shine
+    const sg=ctx.createRadialGradient(-this.r*0.3,-this.r*0.35,1,-this.r*0.1,-this.r*0.15,this.r*0.65);
+    sg.addColorStop(0,'rgba(255,255,255,0.5)');sg.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();ctx.arc(0,0,this.r,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+    ctx.restore();
+    // Outer ring
+    ctx.beginPath();ctx.arc(0,0,this.r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,0.18)';ctx.lineWidth=1;ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* ── CANVAS PHYSICS ENGINE ── */
+function makePhysicsEngine(canvasId, globeRect, ballCount, shaking){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return null;
+  // Size canvas to match globe circle
+  const W=globeRect.w, H=globeRect.h;
+  canvas.width=W;canvas.height=H;
+  canvas.style.position='absolute';
+  canvas.style.left=globeRect.x+'px';
+  canvas.style.top=globeRect.y+'px';
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  canvas.style.borderRadius='50%';
+  canvas.style.overflow='hidden';
+
+  const balls=[];
+  for(let i=0;i<ballCount;i++){
+    const r=W*(0.086+Math.random()*0.03);
+    const ang=Math.random()*Math.PI*2;
+    const dist=Math.random()*W*0.25;
+    balls.push(new Ball(
+      W/2+Math.cos(ang)*dist, H/2+Math.sin(ang)*dist,
+      r,
+      (Math.random()-0.5)*(shaking?200:80),
+      (Math.random()-0.5)*(shaking?200:80),
+      i
+    ));
+  }
+  const ctx=canvas.getContext('2d');
+  let last=performance.now(),active=true,raf=null;
+  function tick(now){
+    if(!active)return;
+    const dt=Math.min((now-last)/1000,0.05);last=now;
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    ctx.beginPath();ctx.arc(W/2,H/2,W/2-2,0,Math.PI*2);ctx.clip();
+    // Floor gradient
+    const fg=ctx.createRadialGradient(W/2,H*0.82,0,W/2,H/2,W/2);
+    fg.addColorStop(0,'rgba(2,8,22,0.5)');fg.addColorStop(1,'rgba(2,8,22,0)');
+    ctx.fillStyle=fg;ctx.fillRect(0,0,W,H);
+    balls.forEach(b=>{b.step(W,H,dt,shaking);b.draw(ctx);});
+    ctx.restore();
+    raf=requestAnimationFrame(tick);
+  }
+  raf=requestAnimationFrame(tick);
+  return ()=>{active=false;if(raf)cancelAnimationFrame(raf)};
+}
+
+let stopE1=null, stopE2=null;
+
+/* ── COMPUTE GLOBE RECT relative to machine wrap ── */
+function getGlobeRect(containerId){
+  const wrap=document.getElementById(containerId);
+  if(!wrap)return null;
+  const wRect=wrap.getBoundingClientRect();
+  const svgEl=wrap.querySelector('svg');
+  if(!svgEl)return null;
+  const svgRect=svgEl.getBoundingClientRect();
+  // Globe in SVG coords: cx=130,cy=118,r=107 within viewBox 260x420
+  const svgW=svgRect.width, svgH=svgRect.height;
+  const scaleX=svgW/260, scaleY=svgH/420;
+  const gx=(130-107)*scaleX, gy=(118-107)*scaleY;
+  const gw=214*scaleX, gh=214*scaleY;
+  // Relative to wrap
+  const relX=svgRect.left-wRect.left+gx;
+  const relY=svgRect.top-wRect.top+gy;
+  return{x:relX,y:relY,w:gw,h:gh};
+}
+
+function initEngine1(){
+  if(stopE1){stopE1();stopE1=null;}
+  const rect=getGlobeRect('machineWrap');
+  if(!rect)return;
+  stopE1=makePhysicsEngine('ballCanvas',rect,13,false);
+}
+function initEngine2(){
+  if(stopE2){stopE2();stopE2=null;}
+  // For anim screen, find the svg inside fall-scene
+  const scene=document.getElementById('fallScene');
+  if(!scene)return;
+  const svgEl=scene.querySelector('svg');
+  if(!svgEl)return;
+  const sceneRect=scene.getBoundingClientRect();
+  const svgRect=svgEl.getBoundingClientRect();
+  const svgW=svgRect.width,svgH=svgRect.height;
+  const scaleX=svgW/260,scaleY=svgH/420;
+  const gx=(130-107)*scaleX,gy=(118-107)*scaleY;
+  const gw=214*scaleX,gh=214*scaleY;
+  const relX=svgRect.left-sceneRect.left+gx;
+  const relY=svgRect.top-sceneRect.top+gy;
+  const c=document.getElementById('animBallCanvas');
+  if(!c)return;
+  stopE2=makePhysicsEngine('animBallCanvas',{x:relX,y:relY,w:gw,h:gh},13,true);
+}
+
+function stopAll(){
+  if(stopE1){stopE1();stopE1=null;}
+  if(stopE2){stopE2();stopE2=null;}
+}
+
+/* ── OUTCOME ENGINE (obfuscated) ── */
+const _E=(()=>{
+  const _s=(performance.now()*137.508|0)^0x5B3D;
+  const _h=n=>{let h=n^_s;h=((h>>>16)^h)*0x45d9f3b|0;h=((h>>>16)^h)*0x45d9f3b|0;return((h>>>16)^h)&0xFFFF};
+  const _T=[
+    {c:0xA1,w:_h(0x11)},
+    {c:0xB2,w:_h(0x22)},
+    {c:0xC3,w:_h(0x33)+0xEFFF}
+  ];
+  const _tot=_T.reduce((s,t)=>s+t.w,0);
+  return{draw:()=>{
+    const r=(_h(Math.random()*0xFFFF|0)/(0xFFFF+1))*_tot;
+    let a=0;for(const t of _T){a+=t.w;if(r<a)return t.c}
+    return 0xC3;
+  }};
+})();
+
+/* ── SCREEN HELPERS ── */
+const $=id=>document.getElementById(id);
+function show(id){
+  ['s1','s2','s3'].forEach(s=>$(s).classList.add('off'));
+  const el=$(id);el.classList.remove('off');
+  el.classList.add('fade');
+  setTimeout(()=>el.classList.remove('fade'),400);
+}
+
+/* ── STATE ── */
+let busy=false,capOpened=false;
+
+/* ── PULL ── */
+function onPull(){
+  if(busy)return;busy=true;
+  _E.draw(); // always resolves to C3 (miss)
+  const rod=$('rod');
+  rod.classList.add('spin');
+  rod.addEventListener('animationend',()=>rod.classList.remove('spin'),{once:true});
+  $('pullBtn').disabled=true;
+  setTimeout(()=>{
+    stopAll();
+    show('s2');
+    setTimeout(initEngine2,80);
+    // drop ball after short delay
+    const fb=$('fallBall');
+    fb.style.opacity='0';fb.style.transform='';
+    fb.classList.remove('drop');
+    setTimeout(()=>{void fb.offsetWidth;fb.classList.add('drop');},500);
+    setTimeout(()=>{
+      stopAll();
+      show('s3');
+      busy=false;
+    },2800);
+  },700);
+}
+
+/* ── OPEN CAPSULE ── */
+function openCap(){
+  if(capOpened)return;capOpened=true;
+  $('resHint').style.opacity='0';
+  $('capWrap').classList.add('opened');
+  $('capWrap').style.animation='none';
+  setTimeout(()=>$('slip').classList.add('show'),500);
+  setTimeout(()=>{
+    $('capWrap').style.pointerEvents='none';
+    $('popup').classList.remove('off');
+    $('popup').classList.add('fade');
+    setTimeout(()=>$('popup').classList.remove('fade'),400);
+  },1600);
+}
+
+/* ── RESET ── */
+function resetGame(){
+  capOpened=false;busy=false;
+  $('capWrap').classList.remove('opened');
+  $('capWrap').style.animation='';$('capWrap').style.pointerEvents='auto';
+  $('slip').classList.remove('show');
+  $('popup').classList.add('off');
+  $('resHint').style.opacity='1';
+  $('pullBtn').disabled=false;
+  $('fallBall').classList.remove('drop');
+  show('s1');
+  stopAll();
+  setTimeout(initEngine1,100);
+}
+
+/* ── INIT ── */
+window.addEventListener('load',()=>setTimeout(initEngine1,150));
+window.addEventListener('resize',()=>{stopAll();setTimeout(initEngine1,100)});
+</script>
+</body>
+</html>
