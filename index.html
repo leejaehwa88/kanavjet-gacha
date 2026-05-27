@@ -28,7 +28,7 @@ body{
   box-shadow:0 0 80px rgba(26,86,196,0.22),inset 0 1px 0 rgba(255,255,255,0.05);
 }
 .hdr{
-  width:100%;padding:clamp(7px,1.8vh,13px) 20px clamp(5px,1.2vh,9px);
+  width:100%;padding:clamp(6px,1.4vh,10px) 18px clamp(4px,1vh,8px);
   background:linear-gradient(180deg,rgba(26,86,196,0.18) 0%,transparent 100%);
   border-bottom:1px solid rgba(120,180,255,0.14);text-align:center;flex-shrink:0;
 }
@@ -55,12 +55,20 @@ body{
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
 /* S1 */
-#s1{justify-content:space-between;padding:clamp(5px,1.2vh,9px) 0 clamp(9px,2vh,15px)}
-.welcome{
-  text-align:center;padding:0 22px;flex-shrink:0;
-  font-size:clamp(9.5px,2.4vw,12px);color:#4a6898;line-height:1.7;
+#s1{justify-content:flex-start;padding:0 0 clamp(9px,2vh,14px);gap:0}
+.welcome{display:none}
+
+/* 환영 문구 — 기계와 완전히 분리된 고정 블록 */
+.welcome-bar{
+  width:100%;flex-shrink:0;
+  padding:clamp(7px,1.6vh,11px) 20px;
+  text-align:center;
+  font-size:clamp(10px,2.5vw,12.5px);color:#5a7aaa;line-height:1.65;
+  background:rgba(255,255,255,0.025);
+  border-bottom:1px solid rgba(120,180,255,0.09);
 }
-.welcome strong{color:var(--blue3)}
+.welcome-bar strong{color:var(--blue3);font-weight:700}
+
 .machine-scene{
   position:relative;flex:1;min-height:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -68,7 +76,8 @@ body{
 }
 .machine-svg-wrap{
   position:relative;
-  width:clamp(160px,min(56vw,44vh),250px);
+  /* 남은 세로 공간 기준으로 크기 제한 — 절대 튀어나오지 않음 */
+  width:clamp(160px,min(58vw,42vh),250px);
 }
 #ballCanvas{position:absolute;border-radius:6px 6px 0 0;z-index:2;pointer-events:none}
 
@@ -253,6 +262,23 @@ body{
   border-top:1px solid rgba(255,255,255,0.05);padding-top:6px;
 }
 .promo-body strong{color:var(--gold2)}
+/* 3제 복합제 배지 */
+.triple-badge{
+  display:inline-block;
+  background:linear-gradient(90deg,var(--blue),var(--blue3));
+  color:#fff;font-size:11px;font-weight:900;letter-spacing:1.5px;
+  padding:4px 14px;border-radius:20px;margin-bottom:7px;
+  box-shadow:0 2px 10px rgba(26,86,196,0.45);
+}
+/* 성분 한 줄 표시 */
+.ingredient-row{
+  font-size:clamp(9px,2.3vw,11px);font-weight:700;
+  color:var(--silver2);text-align:center;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(120,180,255,0.12);
+  border-radius:8px;padding:6px 10px;margin-bottom:8px;
+  letter-spacing:0.3px;line-height:1.5;
+}
 .launch{
   display:inline-block;font-size:13px;font-weight:900;
   background:linear-gradient(90deg,var(--gold),var(--gold2));
@@ -284,7 +310,9 @@ body{
 
   <!-- S1 INTRO -->
   <div class="screen" id="s1">
-    <div class="welcome">
+
+    <!-- 환영 문구: 기계 위에 별도 영역으로 완전 분리 -->
+    <div class="welcome-bar">
       보령의 새로운 도약, <strong>카나브젯</strong> 출시를 축하합니다!<br>
       출시 기념 캡슐 뽑기 이벤트에 참여해 보세요.
     </div>
@@ -523,29 +551,38 @@ body{
           <em>카나브</em>의 강력한 효과에<br>
           <em>이중 지질 강하 시너지를 더하다!</em>
         </div>
+
+        <!-- 3제 복합제 배지 -->
+        <div class="triple-badge">💊 3제 복합제</div>
+
+        <!-- 성분 한 줄 -->
+        <div class="ingredient-row">
+          피마사르탄 + 아토르바스타틴 + 에제티미브
+        </div>
+
         <div class="feats">
           <div class="feat">
-            <div class="feat-ic">💊</div>
-            <span>피마사르탄<br>+ 로수바스타틴<br>+ 에제티미브</span>
-          </div>
-          <div class="feat">
             <div class="feat-ic">❤️</div>
-            <span>고혈압 + 이상지질혈증<br>3제 복합제</span>
+            <span>고혈압 +<br>이상지질혈증</span>
           </div>
           <div class="feat">
             <div class="feat-ic">📉</div>
-            <span>LDL-콜레스테롤<br>이중 기전 강하</span>
+            <span>LDL-C<br>이중 기전 강하</span>
+          </div>
+          <div class="feat">
+            <div class="feat-ic">🏆</div>
+            <span>카나브<br>검증된 효능</span>
           </div>
           <div class="feat">
             <div class="feat-ic">🚀</div>
-            <span>1정으로<br>혈압·지질 동시 치료</span>
+            <span>1정으로<br>동시 치료</span>
           </div>
         </div>
         <div class="promo-body">
           <span class="launch">6월 1일 급여 출시!</span><br>
-          <strong>카나브젯</strong>(피마사르탄/로수바스타틴/에제티미브)은<br>
-          보령의 8번째 카나브 패밀리로, 고혈압과 이상지질혈증을<br>
-          1정으로 동시에 치료하는 3제 복합제입니다.<br>
+          <strong>카나브젯</strong>(피마사르탄/아토르바스타틴/에제티미브)은<br>
+          보령의 카나브 패밀리 3제 복합제로,<br>
+          고혈압과 이상지질혈증을 1정으로 동시에 치료합니다.<br>
           많은 관심과 처방 부탁드립니다.<br>
           <span style="font-size:9px;opacity:0.6">— (주)보령 드림 —</span>
         </div>
@@ -730,8 +767,10 @@ function onPull(){
     stopAll();show('s2');setTimeout(initE2,80);
     const fb=$('fallBall');
     fb.style.opacity='0';fb.classList.remove('drop');
-    setTimeout(()=>{void fb.offsetWidth;fb.classList.add('drop');},500);
-    setTimeout(()=>{stopAll();show('s3');busy=false;},2900);
+    // 캡슐들이 1600ms 동안 격렬하게 돌아다닌 뒤, 0.7초 잠깐 멈추는 느낌 후 낙하
+    setTimeout(()=>{void fb.offsetWidth;fb.classList.add('drop');},2300);
+    // 낙하 애니메이션(1.1s) 끝나고 결과 화면으로
+    setTimeout(()=>{stopAll();show('s3');busy=false;},4200);
   },720);
 }
 
